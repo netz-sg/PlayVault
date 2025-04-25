@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/components/auth-provider"
 import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 import { Toaster } from "@/components/toaster"
 import { ErrorBoundary } from "@/components/error-boundary"
 
@@ -23,13 +24,14 @@ export default function RootLayout({
   return (
     <html lang="de">
       <body
-        className={`${inter.className} min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/10 to-slate-900`}
+        className={`${inter.className} min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/10 to-slate-900 flex flex-col`}
       >
         <AuthProvider>
           <Header />
           <ErrorBoundary>
-            <main className="container mx-auto px-4 py-8">{children}</main>
+            <main className="container mx-auto px-4 py-8 flex-grow">{children}</main>
           </ErrorBoundary>
+          <Footer />
           <Toaster />
         </AuthProvider>
       </body>
