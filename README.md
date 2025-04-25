@@ -8,7 +8,7 @@
 
 Eine moderne Web-Anwendung zur Verwaltung deiner Spielesammlung mit umfangreichen Funktionen zur Fortschrittsverfolgung, Spielzeiterfassung und Organisation.
 
-![Game Library Screenshot](https://via.placeholder.com/800x400?text=Game+Library+Screenshot)
+![PlayVault Screenshot](https://i.ibb.co/qMBnCvT9/Unbenannt-1.png)
 
 (Für ein tatsächliches Screenshot deiner Anwendung, füge ein Bild in das Repository ein und aktualisiere den Pfad entsprechend)
 
