@@ -126,7 +126,7 @@ Dieses Projekt ist unter der MIT-Lizenz veröffentlicht.
 
 ## Docker Deployment
 
-Diese Anwendung kann mit Docker und Docker Compose bereitgestellt werden.
+Diese Anwendung kann mit Docker und Docker Compose bereitgestellt werden. Die Docker-Konfiguration ist optimiert für eine schnelle Bereitstellung und robuste Datenbank-Initialisierung.
 
 ### Voraussetzungen
 
@@ -141,33 +141,54 @@ Diese Anwendung kann mit Docker und Docker Compose bereitgestellt werden.
    cd <repository-directory>
    ```
 
-2. Umgebungsvariablen konfigurieren:
-   ```
-   cp .env.example .env
-   ```
-   Bearbeite die `.env`-Datei und stelle sicher, dass die `DATABASE_URL` auf `mysql://user:password@db:3306/game_library` gesetzt ist.
-
-3. Container erstellen und starten:
+2. Container erstellen und starten:
    ```
    docker-compose up -d
    ```
+   
+   Beim ersten Start werden automatisch:
+   - Alle notwendigen Images heruntergeladen
+   - Die MariaDB-Datenbank initialisiert
+   - Alle Tabellen und Strukturen angelegt
+   - Die Next.js-Anwendung kompiliert und gestartet
 
-4. Die Anwendung ist unter http://localhost:3000 verfügbar
-   Der Datenbank-Administrator (Adminer) ist unter http://localhost:8080 verfügbar
+3. Zugriff auf die Anwendung:
+   - Die **Spielebibliothek** ist unter http://localhost:3000 verfügbar
+   - Der **Datenbank-Administrator** (Adminer) ist unter http://localhost:8080 verfügbar
+     - Server: `db`
+     - Benutzer: `user`
+     - Passwort: `password`
+     - Datenbank: `game_library`
 
-### Konfiguration
+### Architektur der Docker-Konfiguration
 
-Die Docker-Konfiguration umfasst:
+Die Docker-Umgebung besteht aus drei Hauptkomponenten:
 
-- **Next.js App**: Läuft auf Port 3000
-- **MariaDB**: Läuft auf Port 3306
-- **Adminer**: Ein einfaches Datenbank-Management-Tool auf Port 8080
+- **App-Container** (Next.js):
+  - Basiert auf Node.js 20 Alpine
+  - Enthält die kompilierte Next.js-Anwendung
+  - Wartet auf die Datenbank-Initialisierung, bevor er startet
+
+- **Datenbank-Container** (MariaDB):
+  - Speichert alle Anwendungsdaten
+  - Über Port 3306 erreichbar
+  - Konfiguriert mit UTF-8-Zeichensatz
+
+- **DB-Init-Container**:
+  - Spezieller Container für die Datenbank-Initialisierung
+  - Führt automatisch die SQL-Migrationen aus
+  - Sorgt für korrekte Tabellenstrukturen
+
+- **Adminer-Container**:
+  - Webbasiertes Datenbank-Management-Tool
+  - Ermöglicht direkten Zugriff auf die Datenbank
 
 ### Anwendung verwalten
 
-- Anwendung stoppen:
+- Neustart bei Änderungen:
   ```
-  docker-compose down
+  docker-compose build --no-cache
+  docker-compose up -d
   ```
 
 - Logs anzeigen:
@@ -175,9 +196,14 @@ Die Docker-Konfiguration umfasst:
   docker-compose logs -f
   ```
 
-- Anwendung neu starten:
+- Logs eines bestimmten Dienstes anzeigen:
   ```
-  docker-compose restart
+  docker-compose logs -f app
+  ```
+
+- Anwendung stoppen:
+  ```
+  docker-compose down
   ```
 
 - Anwendung und deren Daten vollständig entfernen:
@@ -185,9 +211,20 @@ Die Docker-Konfiguration umfasst:
   docker-compose down -v
   ```
 
+### Fehlerbehebung
+
+- **Problem**: Container starten nicht ordnungsgemäß
+  **Lösung**: Prüfe die Logs mit `docker-compose logs -f`
+
+- **Problem**: Datenbank-Verbindungsfehler
+  **Lösung**: Stelle sicher, dass der Datenbankcontainer läuft mit `docker-compose ps`. Starte das System bei Bedarf neu.
+
+- **Problem**: Anwendung zeigt Fehler "Table does not exist"
+  **Lösung**: Prüfe die Logs des db-init-Containers. Falls nötig, starte mit `docker-compose down -v && docker-compose up -d` neu.
+
 ### Persistenz der Daten
 
-Die Datenbank-Daten werden in einem Docker-Volume (`mariadb-data`) gespeichert, sodass sie beim Neustart der Container erhalten bleiben.
+Die Datenbank-Daten werden in einem Docker-Volume (`mariadb-data`) gespeichert, sodass sie beim Neustart der Container erhalten bleiben. Um ein Backup der Daten zu erstellen, nutze die integrierte Backup-Funktion der Anwendung oder führe einen MySQL-Dump durch.
 
 ---
 
