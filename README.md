@@ -126,14 +126,14 @@ Dieses Projekt ist unter der MIT-Lizenz veröffentlicht.
 
 ## Docker Deployment
 
-Diese Anwendung kann mit Docker und Docker Compose bereitgestellt werden. Für einfache Tests und Entwicklung wird standardmäßig SQLite verwendet.
+Diese Anwendung kann mit Docker und Docker Compose bereitgestellt werden.
 
 ### Voraussetzungen
 
 - Docker und Docker Compose auf deinem System installiert
 - Git (zum Klonen des Repositories)
 
-### Schnellstart (mit SQLite)
+### Schnellstart
 
 1. Repository klonen:
    ```
@@ -141,32 +141,27 @@ Diese Anwendung kann mit Docker und Docker Compose bereitgestellt werden. Für e
    cd <repository-directory>
    ```
 
-2. Container erstellen und starten:
+2. Umgebungsvariablen konfigurieren:
+   ```
+   cp .env.example .env
+   ```
+   Bearbeite die `.env`-Datei und stelle sicher, dass die `DATABASE_URL` auf `mysql://user:password@db:3306/game_library` gesetzt ist.
+
+3. Container erstellen und starten:
    ```
    docker-compose up -d
    ```
 
-3. Die Anwendung ist unter http://localhost:3000 verfügbar
+4. Die Anwendung ist unter http://localhost:3000 verfügbar
+   Der Datenbank-Administrator (Adminer) ist unter http://localhost:8080 verfügbar
 
-### Verschiedene Datenbank-Optionen
+### Konfiguration
 
-Je nach Bedarf kannst du zwischen verschiedenen Datenbankkonfigurationen wählen:
+Die Docker-Konfiguration umfasst:
 
-#### SQLite (Standard, Einfach)
-```
-docker-compose up -d
-```
-* Ideal für: Tests, Entwicklung, lokale Bereitstellung
-* Vorteile: Kein separater Datenbankserver nötig, einfach zu starten
-* Hinweis: Daten werden in einem Docker-Volume gespeichert
-
-#### MariaDB (Vollständige Version)
-```
-docker-compose -f docker-compose.full.yml up -d
-```
-* Ideal für: Produktivumgebungen, mehrere Benutzer, größere Datenmengen
-* Vorteile: Leistungsstärker, unterstützt komplexere Abfragen
-* Hinweis: Benötigt mehr Ressourcen
+- **Next.js App**: Läuft auf Port 3000
+- **MariaDB**: Läuft auf Port 3306
+- **Adminer**: Ein einfaches Datenbank-Management-Tool auf Port 8080
 
 ### Anwendung verwalten
 
@@ -180,7 +175,7 @@ docker-compose -f docker-compose.full.yml up -d
   docker-compose logs -f
   ```
 
-- Anwendung neustarten:
+- Anwendung neu starten:
   ```
   docker-compose restart
   ```
@@ -190,9 +185,9 @@ docker-compose -f docker-compose.full.yml up -d
   docker-compose down -v
   ```
 
-### Datenmigration
+### Persistenz der Daten
 
-Um Daten von SQLite zu MariaDB zu migrieren, musst du die Daten exportieren und importieren. Eine einfache Anleitung dazu wird in Zukunft bereitgestellt.
+Die Datenbank-Daten werden in einem Docker-Volume (`mariadb-data`) gespeichert, sodass sie beim Neustart der Container erhalten bleiben.
 
 ---
 
