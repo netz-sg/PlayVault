@@ -23,6 +23,7 @@ Eine moderne Web-Anwendung zur Verwaltung deiner Spielesammlung mit umfangreiche
 - [API-Anbindung](#-api-anbindung)
 - [Admin-Bereich](#-admin-bereich)
 - [Lizenz](#-lizenz)
+- [Docker Deployment](#-docker-deployment)
 
 ## ✨ Features
 
@@ -123,29 +124,75 @@ Der Admin-Bereich bietet erweiterte Funktionen:
 
 Dieses Projekt ist unter der MIT-Lizenz veröffentlicht.
 
+## Docker Deployment
+
+Diese Anwendung kann mit Docker und Docker Compose bereitgestellt werden. Für einfache Tests und Entwicklung wird standardmäßig SQLite verwendet.
+
+### Voraussetzungen
+
+- Docker und Docker Compose auf deinem System installiert
+- Git (zum Klonen des Repositories)
+
+### Schnellstart (mit SQLite)
+
+1. Repository klonen:
+   ```
+   git clone <repository-url>
+   cd <repository-directory>
+   ```
+
+2. Container erstellen und starten:
+   ```
+   docker-compose up -d
+   ```
+
+3. Die Anwendung ist unter http://localhost:3000 verfügbar
+
+### Verschiedene Datenbank-Optionen
+
+Je nach Bedarf kannst du zwischen verschiedenen Datenbankkonfigurationen wählen:
+
+#### SQLite (Standard, Einfach)
 ```
-MIT License
-
-Copyright (c) 2024 Sebastian
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+docker-compose up -d
 ```
+* Ideal für: Tests, Entwicklung, lokale Bereitstellung
+* Vorteile: Kein separater Datenbankserver nötig, einfach zu starten
+* Hinweis: Daten werden in einem Docker-Volume gespeichert
+
+#### MariaDB (Vollständige Version)
+```
+docker-compose -f docker-compose.full.yml up -d
+```
+* Ideal für: Produktivumgebungen, mehrere Benutzer, größere Datenmengen
+* Vorteile: Leistungsstärker, unterstützt komplexere Abfragen
+* Hinweis: Benötigt mehr Ressourcen
+
+### Anwendung verwalten
+
+- Anwendung stoppen:
+  ```
+  docker-compose down
+  ```
+
+- Logs anzeigen:
+  ```
+  docker-compose logs -f
+  ```
+
+- Anwendung neustarten:
+  ```
+  docker-compose restart
+  ```
+
+- Anwendung und deren Daten vollständig entfernen:
+  ```
+  docker-compose down -v
+  ```
+
+### Datenmigration
+
+Um Daten von SQLite zu MariaDB zu migrieren, musst du die Daten exportieren und importieren. Eine einfache Anleitung dazu wird in Zukunft bereitgestellt.
 
 ---
 

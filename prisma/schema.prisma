@@ -5,13 +5,14 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
+  provider      = "prisma-client-js"
+  output        = "../lib/generated/prisma"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://mariadb:Z92bqoby7v0YGYks4BkaRRrkKCTDoaOyy50A4YSIbp7MVVx9XJz5YgBpOUWm04mq@89.58.59.13:5087/default"
+  url      = env("DATABASE_URL")
 }
 
 model User {
