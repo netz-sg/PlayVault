@@ -1,0 +1,236 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 142.1 76.2% 36.3%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Verbesserte Lesbarkeit für kleine Texte */
+  .text-xs,
+  .text-sm {
+    @apply font-medium tracking-wide;
+  }
+
+  /* Verbesserte Kontraste für Texte auf dunklen Hintergründen */
+  .text-slate-300 {
+    @apply text-slate-200;
+  }
+
+  .text-slate-400 {
+    @apply text-slate-300;
+  }
+
+  /* Verbesserte Lesbarkeit für Überschriften */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply tracking-tight text-white;
+  }
+
+  /* Verbesserte Lesbarkeit für Links */
+  a {
+    @apply transition-colors duration-200;
+  }
+}
+
+/* Animation für schwebende Elemente */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+  }
+  50% {
+    transform: translateY(0) translateX(10px);
+  }
+  75% {
+    transform: translateY(10px) translateX(5px);
+  }
+}
+
+/* Perspektive für 3D-Effekte */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Rotationen für 3D-Effekte */
+.-rotate-y-5 {
+  transform: rotateY(-5deg);
+}
+
+.rotate-y-5 {
+  transform: rotateY(5deg);
+}
+
+/* Verbesserte Glaseffekte */
+.glass-highlight {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-highlight::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Verbesserte Schatten für mehr Tiefe */
+.shadow-depth {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2), 0 0 0 1px
+    rgba(255, 255, 255, 0.05) inset;
+}
+
+/* Verbesserte Hover-Effekte */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+/* Verbesserte Hover-Effekte für Karten */
+.card-hover-content {
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  overflow: hidden;
+}
+
+/* Verbesserte Fokus-Stile für Barrierefreiheit */
+.focus-visible:focus-visible {
+  @apply outline-none ring-2 ring-emerald-500 ring-offset-2 ring-offset-black;
+}
+
+/* Verbesserte Animationen */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.7;
+    box-shadow: 0 0 15px 2px rgba(74, 222, 128, 0.2);
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 25px 5px rgba(74, 222, 128, 0.4);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Verbesserte Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Verbesserte Truncate-Klassen für flexiblere Textkürzung */
+.truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.truncate-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Verbesserte Container-Höhen */
+.min-card-height {
+  min-height: 400px;
+}
+
+/* Verbesserte Scrollbars für Hover-Inhalte */
+.hover-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.hover-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.hover-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.hover-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
