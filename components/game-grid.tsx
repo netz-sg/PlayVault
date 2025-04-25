@@ -11,7 +11,11 @@ import { getAllGames, deleteGame } from "@/lib/client-storage"
 import type { Game } from "@/lib/types"
 import { useAuth } from "@/components/auth-provider"
 
-export function GameGrid() {
+interface GameGridProps {
+  filterStatus?: string;
+}
+
+export function GameGrid({ filterStatus }: GameGridProps = {}) {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [sortBy, setSortBy] = useState<string>("name")
   const [games, setGames] = useState<Game[]>([])
@@ -34,8 +38,13 @@ export function GameGrid() {
     loadGames()
   }, [])
 
+  // Filter games based on filterStatus prop if provided
+  const filteredGames = filterStatus 
+    ? games.filter(game => game.status === filterStatus)
+    : games;
+
   // Sort games based on sortBy state
-  const sortedGames = [...games].sort((a, b) => {
+  const sortedGames = [...filteredGames].sort((a, b) => {
     switch (sortBy) {
       case "name":
         return a.name.localeCompare(b.name)
@@ -72,10 +81,14 @@ export function GameGrid() {
     )
   }
 
-  if (games.length === 0) {
+  if (sortedGames.length === 0) {
     return (
       <GlassContainer className="p-8 text-center" intensity="medium" textContrast="high">
-        <p className="text-white mb-4">Keine Spiele in der Bibliothek.</p>
+        <p className="text-white mb-4">
+          {filterStatus 
+            ? `Keine Spiele mit dem Status "${filterStatus}" in der Bibliothek.`
+            : "Keine Spiele in der Bibliothek."}
+        </p>
         {isAdmin && (
           <p className="text-slate-300">Füge Spiele über den Admin-Bereich hinzu, um deine Bibliothek zu füllen.</p>
         )}
@@ -87,7 +100,11 @@ export function GameGrid() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <GlassContainer className="py-2 px-4" intensity="medium" textContrast="high">
-          <div className="text-sm text-emerald-400 font-medium">{games.length} Spiele in der Bibliothek</div>
+          <div className="text-sm text-emerald-400 font-medium">
+            {sortedGames.length} {filterStatus ? `${filterStatus} ` : ""}
+            {sortedGames.length === 1 ? "Spiel" : "Spiele"} 
+            {filterStatus ? "" : "in der Bibliothek"}
+          </div>
         </GlassContainer>
 
         <div className="flex items-center gap-2">

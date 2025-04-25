@@ -21,6 +21,35 @@ export interface RawgGame {
   publishers?: { id: number; name: string }[]
 }
 
+// Function to get high-resolution image URLs
+export const getHighResImageUrl = (originalUrl: string): string => {
+  if (!originalUrl) return "";
+  
+  // RAWG images often have a format like:
+  // https://media.rawg.io/media/games/456/456dea5e1c7e3cd07060c14e96612001.jpg
+  // We can get higher resolution by fetching from their crop API:
+  // https://media.rawg.io/media/crop/600/400/games/456/456dea5e1c7e3cd07060c14e96612001.jpg
+  
+  try {
+    // Check if it's a RAWG media URL
+    if (originalUrl.includes('media.rawg.io')) {
+      // Extract the path after /media/
+      const mediaPart = originalUrl.split('/media/')[1];
+      
+      if (mediaPart) {
+        // Create high-res URL (1280x720 for hero images)
+        return `https://media.rawg.io/media/crop/1280/720/${mediaPart}`;
+      }
+    }
+    
+    // If not a RAWG URL or parsing fails, return the original
+    return originalUrl;
+  } catch (error) {
+    console.error("Error processing image URL:", error);
+    return originalUrl;
+  }
+}
+
 export interface SearchResults {
   count: number
   next: string | null

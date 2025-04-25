@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useAuth } from "@/components/auth-provider"
+import { saveGame } from "@/lib/client-storage"
 import type { Game } from "@/lib/types"
 import { PlatformIcon } from "@/components/platform-icon"
 
@@ -35,6 +36,28 @@ export function GameCard({ game, onDelete }: GameCardProps) {
         return "bg-gradient-to-r from-slate-600 to-slate-700 text-white font-medium"
       default:
         return "bg-gradient-to-r from-slate-600 to-slate-700 text-white font-medium"
+    }
+  }
+
+  // Handle favorite toggle
+  const handleToggleFavorite = async (e: React.MouseEvent) => {
+    e.preventDefault() // Prevent link navigation
+    e.stopPropagation() // Prevent event bubbling
+    
+    const newFavoriteStatus = !isFavorite
+    setIsFavorite(newFavoriteStatus)
+    
+    try {
+      const updatedGame = {
+        ...game,
+        favorite: newFavoriteStatus,
+        lastModified: new Date().toISOString()
+      }
+      
+      await saveGame(updatedGame)
+    } catch (error) {
+      console.error("Failed to update favorite status:", error)
+      setIsFavorite(!newFavoriteStatus) // Revert on error
     }
   }
 
@@ -138,7 +161,7 @@ export function GameCard({ game, onDelete }: GameCardProps) {
                 className={`backdrop-blur-sm hover:bg-white/10 h-8 w-8 text-white border border-white/20 transition-colors duration-300 ${
                   isFavorite ? "bg-rose-500/30 text-rose-400 border-rose-500/50" : "bg-black/50"
                 }`}
-                onClick={() => setIsFavorite(!isFavorite)}
+                onClick={handleToggleFavorite}
               >
                 <Heart className={`h-4 w-4 ${isFavorite ? "fill-rose-400" : ""}`} />
               </Button>
