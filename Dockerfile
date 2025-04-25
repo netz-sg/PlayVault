@@ -34,18 +34,21 @@ RUN adduser --system --uid 1001 nextjs
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
+# Install mysql client for health checking
+RUN apk add --no-cache mysql-client bash
+
 # Automatically leverage output traces to reduce image size
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 
-# Create startup script
+# Create startup script with proper line endings
 COPY --from=builder --chown=nextjs:nodejs /app/start.sh ./start.sh
-RUN chmod +x ./start.sh
+RUN chmod +x ./start.sh && \
+    sed -i 's/\r$//' ./start.sh
 
 # Set user to non-root
 USER nextjs

@@ -12,12 +12,33 @@ services:
       db:
         condition: service_healthy
     environment:
-      - DATABASE_URL=mysql://user:password@db:3306/game_library
+      - DATABASE_URL=mysql://user:password@db:3306/game_library?connect_timeout=300
       - NODE_ENV=production
     networks:
       - app-network
     volumes:
       - ./prisma:/app/prisma
+    
+  db-init:
+    image: mariadb:10.6
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./prisma/migrations:/migrations
+    environment:
+      - MYSQL_PWD=rootpassword
+    command: >
+      bash -c '
+      sleep 10 &&
+      mysql -h db -u root -e "SET GLOBAL max_allowed_packet=67108864;" &&
+      echo "Running migrations..." &&
+      cat /migrations/20250425000000_init/migration.sql | mysql -h db -u root game_library &&
+      echo "Migrations completed successfully" &&
+      exit 0
+      '
+    networks:
+      - app-network
 
   db:
     image: mariadb:10.6
@@ -39,6 +60,7 @@ services:
       timeout: 5s
       retries: 20
       start_period: 10s
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
 
   adminer:
     image: adminer:latest
