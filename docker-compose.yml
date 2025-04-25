@@ -16,6 +16,8 @@ services:
       - NODE_ENV=production
     networks:
       - app-network
+    volumes:
+      - ./prisma:/app/prisma
 
   db:
     image: mariadb:10.6
@@ -32,10 +34,11 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MYSQL_ROOT_PASSWORD"]
-      interval: 5s
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 2s
       timeout: 5s
-      retries: 10
+      retries: 20
+      start_period: 10s
 
   adminer:
     image: adminer:latest
