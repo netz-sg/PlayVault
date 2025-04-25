@@ -9,8 +9,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      db:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     environment:
       - DATABASE_URL=mysql://user:password@db:3306/game_library?connect_timeout=300
       - NODE_ENV=production
@@ -18,6 +18,12 @@ services:
       - app-network
     volumes:
       - ./prisma:/app/prisma
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     
   db-init:
     image: mariadb:10.6
@@ -30,11 +36,18 @@ services:
       - MYSQL_PWD=rootpassword
     command: >
       bash -c '
-      sleep 10 &&
-      mysql -h db -u root -e "SET GLOBAL max_allowed_packet=67108864;" &&
+      sleep 15 &&
+      echo "Connecting to database..." &&
+      mysql -h db -u root -prootpassword -e "SELECT 1;" &&
+      echo "Connection successful" &&
+      echo "Setting global parameters..." &&
+      mysql -h db -u root -prootpassword -e "SET GLOBAL max_allowed_packet=67108864;" &&
       echo "Running migrations..." &&
-      cat /migrations/20250425000000_init/migration.sql | mysql -h db -u root game_library &&
+      cat /migrations/20250425000000_init/migration.sql | mysql -h db -u root -prootpassword game_library &&
       echo "Migrations completed successfully" &&
+      echo "Testing user access..." &&
+      mysql -h db -u user -ppassword game_library -e "SELECT 1;" &&
+      echo "User access successful" &&
       exit 0
       '
     networks:
@@ -55,11 +68,11 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
-      interval: 2s
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
       timeout: 5s
       retries: 20
-      start_period: 10s
+      start_period: 15s
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --default-authentication-plugin=mysql_native_password
 
   adminer:
